@@ -20,6 +20,15 @@ class AppDatabase extends _$AppDatabase {
     return await (select(categories)..where((tbl) => tbl.type.equals(type)))
         .get();
   }
+
+  Future updateCategoryRepo(int id, String newName) async {
+    return (update(categories)..where((tbl) => tbl.id.equals(id)))
+        .write(CategoriesCompanion(name: Value(newName),),);
+  }
+
+  Future deleteCategoryRepo(int id) async {
+    return (delete(categories)..where((tbl) => tbl.id.equals(id))).go();
+  }
 }
 
 LazyDatabase _openConnection() {

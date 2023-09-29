@@ -370,14 +370,6 @@ class $TransactionsTable extends Transactions
   late final GeneratedColumn<int> list_id = GeneratedColumn<int>(
       'list_id', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _descriptionMeta =
-      const VerificationMeta('description');
-  @override
-  late final GeneratedColumn<String> description = GeneratedColumn<String>(
-      'description', aliasedName, false,
-      additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 200),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true);
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -403,7 +395,6 @@ class $TransactionsTable extends Transactions
         nominal,
         name,
         list_id,
-        description,
         createdAt,
         updatedAt,
         deletedAt
@@ -447,14 +438,6 @@ class $TransactionsTable extends Transactions
     } else if (isInserting) {
       context.missing(_list_idMeta);
     }
-    if (data.containsKey('description')) {
-      context.handle(
-          _descriptionMeta,
-          description.isAcceptableOrUnknown(
-              data['description']!, _descriptionMeta));
-    } else if (isInserting) {
-      context.missing(_descriptionMeta);
-    }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -490,8 +473,6 @@ class $TransactionsTable extends Transactions
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       list_id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}list_id'])!,
-      description: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -513,7 +494,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final int nominal;
   final String name;
   final int list_id;
-  final String description;
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? deletedAt;
@@ -523,7 +503,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       required this.nominal,
       required this.name,
       required this.list_id,
-      required this.description,
       required this.createdAt,
       required this.updatedAt,
       this.deletedAt});
@@ -535,7 +514,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     map['nominal'] = Variable<int>(nominal);
     map['name'] = Variable<String>(name);
     map['list_id'] = Variable<int>(list_id);
-    map['description'] = Variable<String>(description);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     if (!nullToAbsent || deletedAt != null) {
@@ -551,7 +529,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       nominal: Value(nominal),
       name: Value(name),
       list_id: Value(list_id),
-      description: Value(description),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       deletedAt: deletedAt == null && nullToAbsent
@@ -569,7 +546,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       nominal: serializer.fromJson<int>(json['nominal']),
       name: serializer.fromJson<String>(json['name']),
       list_id: serializer.fromJson<int>(json['list_id']),
-      description: serializer.fromJson<String>(json['description']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
@@ -584,7 +560,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'nominal': serializer.toJson<int>(nominal),
       'name': serializer.toJson<String>(name),
       'list_id': serializer.toJson<int>(list_id),
-      'description': serializer.toJson<String>(description),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
@@ -597,7 +572,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           int? nominal,
           String? name,
           int? list_id,
-          String? description,
           DateTime? createdAt,
           DateTime? updatedAt,
           Value<DateTime?> deletedAt = const Value.absent()}) =>
@@ -607,7 +581,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
         nominal: nominal ?? this.nominal,
         name: name ?? this.name,
         list_id: list_id ?? this.list_id,
-        description: description ?? this.description,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
@@ -620,7 +593,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('nominal: $nominal, ')
           ..write('name: $name, ')
           ..write('list_id: $list_id, ')
-          ..write('description: $description, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt')
@@ -630,7 +602,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
 
   @override
   int get hashCode => Object.hash(id, transaction_date, nominal, name, list_id,
-      description, createdAt, updatedAt, deletedAt);
+      createdAt, updatedAt, deletedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -640,7 +612,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.nominal == this.nominal &&
           other.name == this.name &&
           other.list_id == this.list_id &&
-          other.description == this.description &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt);
@@ -652,7 +623,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<int> nominal;
   final Value<String> name;
   final Value<int> list_id;
-  final Value<String> description;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
@@ -662,7 +632,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.nominal = const Value.absent(),
     this.name = const Value.absent(),
     this.list_id = const Value.absent(),
-    this.description = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
@@ -673,7 +642,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     required int nominal,
     required String name,
     required int list_id,
-    required String description,
     required DateTime createdAt,
     required DateTime updatedAt,
     this.deletedAt = const Value.absent(),
@@ -681,7 +649,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
         nominal = Value(nominal),
         name = Value(name),
         list_id = Value(list_id),
-        description = Value(description),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
   static Insertable<Transaction> custom({
@@ -690,7 +657,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Expression<int>? nominal,
     Expression<String>? name,
     Expression<int>? list_id,
-    Expression<String>? description,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? deletedAt,
@@ -701,7 +667,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       if (nominal != null) 'nominal': nominal,
       if (name != null) 'name': name,
       if (list_id != null) 'list_id': list_id,
-      if (description != null) 'description': description,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
@@ -714,7 +679,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       Value<int>? nominal,
       Value<String>? name,
       Value<int>? list_id,
-      Value<String>? description,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
       Value<DateTime?>? deletedAt}) {
@@ -724,7 +688,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       nominal: nominal ?? this.nominal,
       name: name ?? this.name,
       list_id: list_id ?? this.list_id,
-      description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
@@ -749,9 +712,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     if (list_id.present) {
       map['list_id'] = Variable<int>(list_id.value);
     }
-    if (description.present) {
-      map['description'] = Variable<String>(description.value);
-    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -772,7 +732,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
           ..write('nominal: $nominal, ')
           ..write('name: $name, ')
           ..write('list_id: $list_id, ')
-          ..write('description: $description, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt')
