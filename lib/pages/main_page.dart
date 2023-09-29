@@ -91,20 +91,6 @@ class _MainPageState extends State<MainPage> {
           ),
           IconButton(
               onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(
-                  builder: (context) => TransactionOutPage(),
-                ))
-                    .then((value) {
-                  setState(() {});
-                });
-              },
-              icon: Icon(Icons.money_off)),
-          SizedBox(
-            width: 5,
-          ),
-          IconButton(
-              onPressed: () {
                 onTapTapped(2);
               },
               icon: Icon(Icons.account_box)),
